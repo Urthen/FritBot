@@ -50,6 +50,9 @@ I18nService.prototype.doTemplate = function (key, args, locale) {
     if (util.isArray(template)) {
         template = _.sample(template);
     }
+    if (!util.isArray(args)) {
+        args = [args];
+    }
 
     args.unshift(template);
     return util.format.apply(util, args);
