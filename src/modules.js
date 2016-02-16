@@ -58,18 +58,8 @@ ModuleLoader.prototype.loadModules = function () {
             }
         }
 
-        if (typeof package_json.keywords === 'undefined') {
-            console.log('Module', package_json.name, 'not loaded: it does not have the fritbot-module keyword.');
-            continue;
-        }
-
         // Exclude packages with incorrect metadata so we aren't loading random things.
-        if (package_json.keywords.indexOf('fritbot-module') === -1) {
-
-            // Display an error if it isn't a known module.
-            if (package_json.keywords.indexOf('fritbot-connector') === -1 && package_json.name !== 'fritbot') {
-                console.log('Module', package_json.name, 'not loaded: it does not have the fritbot-module keyword.');
-            }
+        if (typeof package_json.keywords === 'undefined' || package_json.keywords.indexOf('fritbot-module') == -1 ) {
             continue;
         }
 

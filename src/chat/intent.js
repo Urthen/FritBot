@@ -169,7 +169,6 @@ function handleMessage(route, message) {
 IntentService.prototype.handleMessage = function (route, message) {
     var handler_domain = domain.create();
     handler_domain.add(route);
-    handler_domain.add(message);
     handler_domain.add(this);
 
     handler_domain.on('error', function (er) {

@@ -1,13 +1,13 @@
 {
   "name": "fritbot",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Fritbot: The Angriest Bot",
   "dependencies": {
-    "js-yaml": "",
-    "q": "",
-    "lodash": "",
-    "mongoose-q": "",
-    "moment": ""
+    "js-yaml": "^3.5.3",
+    "lodash": "^4.4.0",
+    "moment": "^2.11.2",
+    "mongoose-q": "^0.1.0",
+    "q": "^1.4.1"
   },
   "devDependencies": {
     "grunt": "",
