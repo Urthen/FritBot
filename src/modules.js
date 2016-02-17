@@ -59,7 +59,7 @@ ModuleLoader.prototype.loadModules = function () {
         }
 
         // Exclude packages with incorrect metadata so we aren't loading random things.
-        if (typeof package_json.keywords === 'undefined' || package_json.keywords.indexOf('fritbot-module') == -1 ) {
+        if (typeof package_json.keywords === 'undefined' || package_json.keywords.indexOf('fritbot-module') === -1 ) {
             continue;
         }
 
@@ -133,8 +133,14 @@ ModuleLoader.prototype.loadModule = function (module, package_json, parent, path
     // If the module has any children, load them.
     if (module.children) {
         for (i = 0; i < module.children.length; i++) {
+            var child = module.children[i];
             try {
-                this.loadModule(module.children[i], package_json, module);
+                var childPath;
+                if (typeof child === typeof '') {
+                    childPath = path.join(pathname, 'node_modules', child);
+                    child = require(childPath);
+                }
+                this.loadModule(child, package_json, module, childPath);
             } catch (e) {
                 console.log('Error loading child module', module.children[i].displayname);
                 throw (e);

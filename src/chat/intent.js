@@ -1,7 +1,6 @@
 // Intent Service
 // Handles all inbound message triggers
 
-var _ = require('lodash');
 var moment = require('moment');
 var domain = require('domain');
 
@@ -37,17 +36,52 @@ IntentService.prototype.loadListener = function (spec) {
 
 // Splits arguments along spaces, unless arg is in quotes.
 IntentService.prototype.splitArgs = function (message) {
-    var args = message.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').match(/[^\s"']+|"([^"]*)"|'([^']*)'/g);
-    if (args) {
-        // Strip quotes from the string
-        return _.map(args, function (arg) { return _.trim(_.trim(arg, '\''), '"'); } );
-    } else {
-        if (message === '') {
-            return [];
+    var args = [];
+
+    var split = message.trim()              // Trim whitespace
+        .replace(/[\u2018\u2019]/g, "'")    // Replace funny mac characters
+        .replace(/[\u201C\u201D]/g, '"')
+        .split(' ');                        // Split on spaces
+
+    var quote = null;
+    var quotedstring = [];
+
+    split.forEach(function (token) {
+        // If we aren't in a quoted string, check to see if we should start one
+        if (quote === null) {
+            if (token[0] === '"' || token[0] === "'") {
+                quote = token[0];
+
+                // Check for single words, quoted
+                if (token[token.length - 1] === quote) {
+                    quote = null;
+                    args.push(token.slice(1, -1));
+                } else {
+                    quotedstring = [token.slice(1)];
+                }
+            } else {
+                args.push(token);
+            }
+
+        // If we are in a quoted string, check to see if we should exit it
         } else {
-            return [message];
+            if (token[token.length - 1] === quote) {
+                quote = null;
+                quotedstring.push(token.slice(0, -1));
+                args.push(quotedstring.join(' '));
+                quotedstring = [];
+            } else {
+                quotedstring.push(token);
+            }
         }
+    });
+
+    // If we're still in a quote, add it back in.
+    if (quotedstring.length) {
+        args.push(quotedstring.join(' '));
     }
+
+    return args;
 };
 
 IntentService.prototype.squelch = function (room, squelched) {
